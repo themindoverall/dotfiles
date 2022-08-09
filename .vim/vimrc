@@ -278,7 +278,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee,*.ts,*.go :call CleanExtraSpaces()
+    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee,*.ts,*.go,*.rb :call CleanExtraSpaces()
 endif
 
 
@@ -351,7 +351,7 @@ function! VisualSelection(direction, extra_filter) range
     let l:pattern = substitute(l:pattern, "\n$", "", "")
 
     if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
+        call CmdLine("Ag '" . l:pattern . "' " )
     elseif a:direction == 'replace'
         call CmdLine("%s" . '/'. l:pattern . '/')
     endif
@@ -365,7 +365,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'quabug/vim-gdscript'
 Plug 'embear/vim-localvimrc'
-Plug 'mileszs/ack.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'ejholmes/vim-forcedotcom'
@@ -384,7 +383,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'p00f/nvim-ts-rainbow'
+Plug 'slim-template/vim-slim'
 call plug#end()
 
 if has("termguicolors")
@@ -559,10 +558,11 @@ else
 endif
 
 map <leader>e :Windows<cr>
+map <leader>r :Buffers<cr>
 map <leader>s :vsplit<cr>
 map <leader>d :split<cr>
 map <leader>= <C-W>
-map <leader>/ :Ack<space>
+map <leader>/ :Ag<space>
 map <leader>G :!git<space>
 map <leader>; %
 map <leader>8 *``
