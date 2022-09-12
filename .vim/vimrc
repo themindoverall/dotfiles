@@ -308,7 +308,7 @@ map <leader>q :e ~/buffer<cr>
 map <leader>x :e ~/buffer.md<cr>
 
 " Toggle paste mode on and off
-map <leader>P :setlocal paste!<cr>
+map <leader><leader>p :setlocal paste!<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -361,8 +361,6 @@ function! VisualSelection(direction, extra_filter) range
 endfunction
 
 call plug#begin('~/.vim/plugged')
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
 Plug 'quabug/vim-gdscript'
 Plug 'embear/vim-localvimrc'
 Plug 'airblade/vim-gitgutter'
@@ -384,6 +382,14 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'slim-template/vim-slim'
+Plug 'nvim-treesitter/nvim-treesitter-context'
+Plug 'ziglang/zig.vim'
+Plug 'andymass/vim-matchup'
+Plug 'izotomas/lazygit-vim'
+Plug 'slim-template/vim-slim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 call plug#end()
 
 if has("termguicolors")
@@ -429,23 +435,23 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<leader><leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<leader><leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<leader><leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<leader><leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<leader><leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
 
   -- Set some keybinds conditional on server capabilities
   if client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    buf_set_keymap("n", "<leader><leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   elseif client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+    buf_set_keymap("n", "<leader><leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
   end
 
   -- Set autocommands conditional on server_capabilities
@@ -465,7 +471,7 @@ end
 
 -- Use a loop to conveniently both setup defined servers 
 -- and map buffer local keybindings when the language server attaches
-local servers = { "gopls", "tsserver", "solargraph" }
+local servers = { "gopls", "tsserver", "solargraph", "rust_analyzer", "elixir" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -494,11 +500,14 @@ EOF
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = {"typescript"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = {"typescript", "rust", "ruby", "elixir"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   highlight = {
     enable = true,              -- false will disable the whole extension
   },
   rainbow = {
+    enable = true,
+  },
+  matchup = {
     enable = true,
   },
 }
@@ -517,6 +526,8 @@ set completeopt=menuone,noinsert,noselect
 
 " Avoid showing message extra message when using completion
 set shortmess+=c
+
+let g:matchup_surround_enabled = 1
 
 let g:compe = {}
 let g:compe.enabled = v:true
@@ -550,25 +561,21 @@ if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
 
-" map <leader>y :GFiles<cr>
-if isdirectory(".git")
-  map <leader>y :GFiles --cached --others --exclude-standard<CR>
-else
-  map <leader>y :Files<CR>
-endif
+map <leader>y <cmd>Telescope find_files<cr>
+map <leader>t <cmd>Telescope buffers<cr>
+map <leader>r <cmd>Telescope treesitter<cr>
+map <leader>q <cmd>Telescope help_tags<cr>
+map <leader>u <cmd>Telescope quickfix<cr>
+map <leader>/ <cmd>Telescope live_grep<cr>
 
-map <leader>e :Windows<cr>
-map <leader>r :Buffers<cr>
 map <leader>s :vsplit<cr>
 map <leader>d :split<cr>
 map <leader>= <C-W>
-map <leader>/ :Ag<space>
-map <leader>G :!git<space>
 map <leader>; %
 map <leader>8 *``
 map <leader>9 *``ciw
-map <leader>? :TSType<cr>
 map <C-n> :NERDTreeToggle<CR>
+nnoremap <C-g> :Lazygit<CR>
 
 nnoremap <leader>j :m .+1<CR>==
 nnoremap <leader>k :m .-2<CR>==
@@ -576,8 +583,8 @@ vnoremap <leader>j :m '>+1<CR>gv=gv
 vnoremap <leader>k :m '<-2<CR>gv=gv
 
 " greatest remap ever
-vnoremap <leader>p "_dP
-nnoremap <leader>p viw"_dP
+xnoremap <leader>p "_dP
+nnoremap <leader>P viw"_dP
 
 lua << EOF
 if vim.fn.has("wsl") then
