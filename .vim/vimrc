@@ -521,6 +521,8 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
   },
 }
+
+vim.keymap.set('n', '<leader><leader>d', vim.diagnostic.setqflist)
 EOF
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
