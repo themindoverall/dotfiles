@@ -1,4 +1,8 @@
+"
 " Based on Amir Salihefendic (http://amix.dk - amix@amix.dk)'s ultimate Vim configuration v6.0 - 01/04/17 14:24:34)
+
+let g:loaded = 1
+let g:loaded_netrwPlugin = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -364,6 +368,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'embear/vim-localvimrc'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'nvim-tree/nvim-tree.lua'
 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -375,7 +381,6 @@ Plug 'prettier/vim-prettier', {
   \ 'do': 'npm install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'vue', 'yaml', 'html'] }
 Plug 'tomasiser/vim-code-dark'
-Plug 'scrooloose/nerdtree'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -389,7 +394,6 @@ Plug 'slim-template/vim-slim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
-Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 if has("termguicolors")
@@ -400,9 +404,6 @@ endif
 
 colorscheme codedark
 let g:airline_theme = 'codedark'
-
-let NERDTreeShowLineNumbers=1
-let NERDTreeShowHidden=1
 
 highlight LspDiagnosticsDefaultError cterm=NONE ctermfg=196 gui=none guifg=#d70000
 highlight LspDiagnosticsDefaultWarning cterm=NONE ctermfg=221 gui=NONE guifg=#ffd75f
@@ -419,6 +420,13 @@ highlight Search ctermbg=238 gui=NONE guibg=#444444
 let g:camelcasemotion_key = '<leader>'
 
 lua << EOF
+require("nvim-tree").setup({
+  open_on_setup = true,
+  renderer = {
+    group_empty = true,
+  },
+})
+
 local nvim_lsp = require('lspconfig')
 -- local completion = require('completion')
 local on_attach = function(client, bufnr)
@@ -576,7 +584,7 @@ map <leader>= <C-W>
 map <leader>; %
 map <leader>8 *``
 map <leader>9 *``ciw
-map <C-n> :NERDTreeToggle<CR>
+map <silent> <C-n> :NvimTreeFocus<CR>
 nnoremap <C-g> :Lazygit<CR>
 
 nnoremap <leader>j :m .+1<CR>==
