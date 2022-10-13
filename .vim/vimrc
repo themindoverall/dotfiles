@@ -402,6 +402,7 @@ colorscheme codedark
 let g:airline_theme = 'codedark'
 
 let NERDTreeShowLineNumbers=1
+let NERDTreeShowHidden=1
 
 highlight LspDiagnosticsDefaultError cterm=NONE ctermfg=196 gui=none guifg=#d70000
 highlight LspDiagnosticsDefaultWarning cterm=NONE ctermfg=221 gui=NONE guifg=#ffd75f
@@ -471,10 +472,14 @@ end
 
 -- Use a loop to conveniently both setup defined servers 
 -- and map buffer local keybindings when the language server attaches
-local servers = { "gopls", "tsserver", "solargraph", "rust_analyzer", "elixir" }
+local servers = { "gopls", "tsserver", "solargraph", "rust_analyzer" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
+nvim_lsp.elixirls.setup {
+  on_attach = on_attach;
+  cmd = { "/Users/christopher.serino/workspace/etc/elixir-ls/language_server.sh" }
+}
 
 vim.fn.sign_define("LspDiagnosticsSignError", {
     texthl = "LspDiagnosticsSignError",
@@ -562,7 +567,7 @@ if executable('ag')
 endif
 
 map <leader>y <cmd>Telescope find_files<cr>
-map <leader>t <cmd>Telescope buffers<cr>
+map <leader>f <cmd>Telescope buffers<cr>
 map <leader>r <cmd>Telescope treesitter<cr>
 map <leader>q <cmd>Telescope help_tags<cr>
 map <leader>u <cmd>Telescope quickfix<cr>
