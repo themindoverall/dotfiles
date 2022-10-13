@@ -137,7 +137,7 @@ if has("gui_running")
 endif
 
 " Set utf8 as standard encoding and en_US as the standard language
-set encoding=utf8
+set encoding=UTF-8
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
@@ -361,11 +361,9 @@ function! VisualSelection(direction, extra_filter) range
 endfunction
 
 call plug#begin('~/.vim/plugged')
-Plug 'quabug/vim-gdscript'
 Plug 'embear/vim-localvimrc'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
-Plug 'ejholmes/vim-forcedotcom'
 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -383,6 +381,7 @@ Plug 'hrsh7th/nvim-compe'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'slim-template/vim-slim'
 Plug 'nvim-treesitter/nvim-treesitter-context'
+Plug 'p00f/nvim-ts-rainbow'
 Plug 'ziglang/zig.vim'
 Plug 'andymass/vim-matchup'
 Plug 'izotomas/lazygit-vim'
@@ -390,6 +389,7 @@ Plug 'slim-template/vim-slim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 if has("termguicolors")
@@ -453,7 +453,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<leader><leader>q', vim.diagnostic.setloclist, opts)
 
   -- Set autocommands conditional on server_capabilities
-  if client.server_capabilities.documentHighlight then
+  if client.server_capabilities.documentHighlightProvider then
     vim.api.nvim_exec([[
       hi LspReferenceRead cterm=bold ctermbg=238 guibg=#444444
       hi LspReferenceText cterm=bold ctermbg=238 guibg=#444444
@@ -502,7 +502,7 @@ EOF
 
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = {"typescript", "rust", "ruby", "elixir"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = {"typescript", "rust", "ruby", "elixir", "go"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   highlight = {
     enable = true,              -- false will disable the whole extension
   },
