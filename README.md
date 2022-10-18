@@ -20,4 +20,15 @@ function tmi () {
     tmux attach-session -dt $session
   fi
 }
+
+function jump () {
+  workspace_dir=$HOME/workspace
+  pushd $workspace_dir > /dev/null
+  project_dir=$(find . -maxdepth 2 -type d | fzf)
+  did_selection=$?
+  popd > /dev/null
+  if [ $did_selection = 0 ]; then
+    cd $workspace_dir/$project_dir && tmi
+  fi
+}
 ```
