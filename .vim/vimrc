@@ -483,7 +483,7 @@ for _, lsp in ipairs(servers) do
 end
 nvim_lsp.elixirls.setup {
   on_attach = on_attach;
-  cmd = { "/Users/christopher.serino/workspace/etc/elixir-ls/language_server.sh" }
+  cmd = { "/home/themoa/workspace/etc/elixir-ls/language_server.sh" }
 }
 
 vim.fn.sign_define("LspDiagnosticsSignError", {
