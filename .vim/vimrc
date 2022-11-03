@@ -615,7 +615,7 @@ end
 nvim_lsp.elixirls.setup {
   on_attach = on_attach;
   capabilities = capabilities;
-  cmd = { "/Users/christopher.serino/workspace/etc/elixir-ls/language_server.sh" }
+  cmd = { vim.fn.expand('$HOME/workspace/etc/elixir-ls/language_server.sh") };
 }
 
 vim.fn.sign_define("LspDiagnosticsSignError", {
