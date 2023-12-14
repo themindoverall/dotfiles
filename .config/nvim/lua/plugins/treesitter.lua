@@ -12,8 +12,8 @@ return {
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
+          init_selection = "<leader>.",
+          node_incremental = "<leader>.",
           scope_incremental = "<nop>",
           node_decremental = "<bs>",
         },
@@ -36,6 +36,8 @@ return {
         "yaml",
         "rust",
         "elixir",
+        "heex",
+        "eex",
       },
     },
   },
