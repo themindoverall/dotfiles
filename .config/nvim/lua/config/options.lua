@@ -2,7 +2,20 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
-local opt = vim.opt
+if vim.env.TMUX then
+  vim.opt.clipboard = nil
+else
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+      ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+    },
+    paste = {
+      ["+"] = {},
+      ["*"] = {},
+    },
+  }
+end
 
-opt.clipboard = nil
-opt.relativenumber = false
+vim.opt.relativenumber = false
