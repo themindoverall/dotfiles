@@ -1,9 +1,9 @@
 # dotfiles
 my dotfiles
 
-run setup.sh
+run `setup.sh`
 
-then add to .zshrc:
+then add to `.zshrc`:
 
 ```
 export PATH=$HOME/.local/bin:$PATH
@@ -21,7 +21,7 @@ function tmi () {
   fi
 }
 
-function jump () {
+function j () {
   workspace_dir=$HOME/workspace
   pushd $workspace_dir > /dev/null
   project_dir=$(find . -maxdepth 2 -type d | fzf)
@@ -29,6 +29,25 @@ function jump () {
   popd > /dev/null
   if [ $did_selection = 0 ]; then
     cd $workspace_dir/$project_dir && tmi
+  fi
+}
+
+function tj () {
+  tmux_session=$(tmux ls | fzf)
+  did_selection=$?
+  if [ $did_selection = 0 ]; then
+    tmux_session=$(echo $tmux_session | cut -d: -f1)
+    tmux a -dt $tmux_session
+  fi
+}
+
+function cdroot () {
+  gitroot=$(git rev-parse --show-toplevel)
+  gitroot_exists=$?
+  if [ $gitroot_exists = 0 ]; then
+    cd $gitroot
+  else
+    echo "No git repository found"
   fi
 }
 ```
